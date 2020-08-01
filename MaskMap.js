@@ -2029,7 +2029,7 @@ const upDataCounty = (importData) => {
   county.innerHTML = str;
 };
 const upDataTown = (importData) => {
-  let str = '<option value=\'全部地區\'>全部地區</option>';
+  let str = '';
   importData[0].AreaList.forEach((item) => {
       str += `<option value='${item.AreaName}'>${item.AreaName}</option>`;
   });
@@ -2044,7 +2044,7 @@ function updateTown(){
       })
     }
   };
-  let str = '<option value=\'全部地區\'>全部地區</option>';
+  let str = '';
   for(let i=0; i<newTown[0].town.length; i++){
     str += `<option value="${newTown[0].town[i].AreaName}">
     ${newTown[0].town[i].AreaName}</option>`
@@ -2052,8 +2052,8 @@ function updateTown(){
   countyTown.innerHTML = str;
 }
 function updateList(){
-  let countySelect = county.value || '臺北市';
-  let townSelect = countyTown.value || '全部地區';
+  let countySelect = county.value;
+  let townSelect = countyTown.value;
   let array = data.features;
   let newList = [];
   let listStr = '';
@@ -2093,17 +2093,7 @@ function updateList(){
             </div>
           </ul>
         </li>
-      </ul></div>`
-    }else if(townSelect === '全部地區'&& array[i].properties.county === countySelect ){
-      newList.push({
-        name: array[i].properties.name,
-        geometry: array[i].geometry.coordinates,
-        address: array[i].properties.address,
-        mask_adult: array[i].properties.mask_adult,
-        mask_child: array[i].properties.mask_child,
-      })
-      listStr += `<ul class="m-0 py-2 px-3 border-bottom pharmacy" data-add="${array[i].properties.address}" data-name="${array[i].properties.name}" data-adult="${array[i].properties.mask_adult}" data-child="${array[i].properties.mask_child}" data-lat="${array[i].geometry.coordinates[1]}" data-lng="${array[i].geometry.coordinates[0]}"><li class="h2 font-weight-bold">${array[i].properties.name}</li><li class="P-address">${array[i].properties.address}</li><li>${array[i].properties.phone}</li><li>${array[i].properties.note}</li><li><ul class="d-flex justify-content-center font-weight-bold"><div class="container p-0"><div class="row"><div class="col-6"><li class="bg-adult px-4 py-2 rounded-pill text-white"><div class="d-flex justify-content-between"><span>成人口罩</span><span>${array[i].properties.mask_adult}</span></div></li></div><div class="col-6"><li class="bg-child px-4 py-2 rounded-pill text-white"><div class="d-flex justify-content-between"><span>兒童口罩</span><span>${array[i].properties.mask_child}</span></div></li></div></div></div></ul></li></ul>`
-    };
+      </ul></div>`}
   }
   document.querySelector('.list').innerHTML = listStr;
    pharmacy = document.querySelectorAll('.pharmacy');
@@ -2122,8 +2112,8 @@ countyTown.addEventListener('change', updateList, false);
 
 //放入地圖圖資
 let map = L.map('map', {
-    center: [25.037736, 121.564433],
-    zoom: 16
+    center: [23.546162, 120.6402133],
+    zoom: 8
 });
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
