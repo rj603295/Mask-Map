@@ -2056,50 +2056,24 @@ function updateList(){
   let townSelect = countyTown.value;
   let array = data.features;
   let newList = [];
-  let listStr = '';
   for(let i=0; i<array.length; i++){
     if(array[i].properties.town === townSelect && array[i].properties.county === countySelect){
       newList.push({
-        name: array[i].properties.name,
-        geometry: array[i].geometry.coordinates,
-        address: array[i].properties.address,
-        mask_adult: array[i].properties.mask_adult,
-        mask_child: array[i].properties.mask_child,
+        properties: {
+          name: array[i].properties.name,
+          address: array[i].properties.address,
+          mask_adult: array[i].properties.mask_adult,
+          mask_child: array[i].properties.mask_child,
+          phone: array[i].properties.phone,
+          note: array[i].properties.note
+        },
+        geometry: {
+          coordinates: array[i].geometry.coordinates
+        },
       })
-      listStr += 
-      `<div class="pharmacy" data-add="${array[i].properties.address}" data-name="${array[i].properties.name}" data-adult="${array[i].properties.mask_adult}" data-child="${array[i].properties.mask_child}" data-lat="${array[i].geometry.coordinates[1]}" data-lng="${array[i].geometry.coordinates[0]}">
-      <ul class="m-0 py-2 px-3 border-bottom">
-        <li class="h2 font-weight-bold">${array[i].properties.name}</li>
-        <li class="P-address">${array[i].properties.address}</li>
-        <li>${array[i].properties.phone}</li>
-        <li>${array[i].properties.note}</li>
-        <li>
-          <ul class="d-flex justify-content-center font-weight-bold">
-            <div class="container p-0"><div class="row"><div class="col-6">
-              <li class="bg-adult px-4 py-2 rounded-pill text-white">
-                <div class="d-flex justify-content-between">
-                  <span class="button-width">成人口罩</span><span>${array[i].properties.mask_adult}</span>
-                </div>
-              </li>
-            </div>
-            <div class="col-6">
-              <li class="bg-child px-4 py-2 rounded-pill text-white">
-                <div class="d-flex justify-content-between">
-                  <span>兒童口罩</span><span>${array[i].properties.mask_child}</span>
-                </div>
-              </li>
-            </div>
-            </div>
-            </div>
-          </ul>
-        </li>
-      </ul></div>`}
+    }
   }
-  document.querySelector('.list').innerHTML = listStr;
-   pharmacy = document.querySelectorAll('.pharmacy');
-  for(let i=0; i<newList.length; i++){
-      pharmacy[i].addEventListener('click', function(e){targetPharmacy(e, newList)}, false);
-  }
+  renderList(newList);
 }
 //縣市change功能
 county.addEventListener('change', areaChange, false);
@@ -2162,7 +2136,7 @@ function renderDay(){
     document.querySelector('.day span').textContent = _chineseDay;
     document.querySelector('.date').textContent = _thisDay;
     //奇數天或偶數天
-    if(_day==1||_day==3||_day==5||_day==7){
+    if(_day===1||_day===3||_day===5||_day===7){
         document.querySelector('.odd').style.display='block';
     }else{
         document.querySelector('.even').style.display='block';
@@ -2170,23 +2144,22 @@ function renderDay(){
 }
 //轉換成中文星期幾
 function DayChange(day){
-    if(day == 1){
+    if(day === 1){
         return "一";
-    }else if(day == 2){
+    }else if(day === 2){
         return "二";
-    }else if(day == 3){
+    }else if(day === 3){
         return "三";
-    }else if(day == 4){
+    }else if(day === 4){
         return "四";
-    }else if(day == 5){
+    }else if(day === 5){
         return "五";
-    }else if(day == 6){
+    }else if(day === 6){
         return "六";
     }else{
         return "日";
     };
 }
-let data;
 function getData(){
   let xhr = new XMLHttpRequest();
   xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json', true);
@@ -2199,7 +2172,6 @@ function getData(){
 }
 searchBtn.addEventListener('click', filterData, false);
 function filterData(){
-  let Str = '';
   let pharmacyData = [];
   if(searchWord.value === ''){
     return alert('請輸入區域、地址或藥局名稱');
@@ -2207,42 +2179,8 @@ function filterData(){
     pharmacyData = data.features.filter(
       item => item.properties.address.match(searchWord.value) || item.properties.name.match(searchWord.value),
     );
-    for(let i=0; i<pharmacyData.length; i++) {
-      Str += 
-    `<a href="#" class="text-decoration-none text-dark pharmacy" data-add="${pharmacyData[i].properties.address}" data-name="${pharmacyData[i].properties.name}" data-adult="${pharmacyData[i].properties.mask_adult}" data-child="${pharmacyData[i].properties.mask_child}" data-lat="${pharmacyData[i].geometry.coordinates[1]}" data-lng="${pharmacyData[i].geometry.coordinates[0]}">
-    <ul class="m-0 py-2 px-3 border-bottom">
-      <li class="h2 font-weight-bold">${pharmacyData[i].properties.name}</li>
-      <li class="P-address">${pharmacyData[i].properties.address}</li>
-      <li>${pharmacyData[i].properties.phone}</li>
-      <li>${pharmacyData[i].properties.note}</li>
-      <li>
-        <ul class="d-flex justify-content-center font-weight-bold">
-          <div class="container p-0"><div class="row"><div class="col-6">
-            <li class="bg-adult px-4 py-2 rounded-pill text-white">
-              <div class="d-flex justify-content-between">
-                <span class="button-width">成人口罩</span><span>${pharmacyData[i].properties.mask_adult}</span>
-              </div>
-            </li>
-          </div>
-          <div class="col-6">
-            <li class="bg-child px-4 py-2 rounded-pill text-white">
-              <div class="d-flex justify-content-between">
-                <span>兒童口罩</span><span>${pharmacyData[i].properties.mask_child}</span>
-              </div>
-            </li>
-          </div>
-          </div>
-          </div>
-        </ul>
-      </li>
-    </ul></a>`
-    }
   }
-  document.querySelector('.list').innerHTML = Str;
-  let pharmacy = document.querySelectorAll('.pharmacy');
-  for(let i=0; i<pharmacyData.length; i++){
-      pharmacy[i].addEventListener('click',  function(e){targetPharmacy(e, pharmacyData)}, false);
-  }
+  renderList(pharmacyData);
 }
 
 function targetPharmacy(e, targetData){
@@ -2275,6 +2213,45 @@ function targetPharmacy(e, targetData){
               </div>
             </div>
           </div>`).openPopup();  
+  }
+}
+
+function renderList (arrayData) {
+  let Str = '';
+  for(let i=0; i<arrayData.length; i++) {
+    Str += 
+  `<a href="#" class="text-decoration-none text-dark pharmacy" data-add="${arrayData[i].properties.address}" data-name="${arrayData[i].properties.name}" data-adult="${arrayData[i].properties.mask_adult}" data-child="${arrayData[i].properties.mask_child}" data-lat="${arrayData[i].geometry.coordinates[1]}" data-lng="${arrayData[i].geometry.coordinates[0]}">
+  <ul class="m-0 py-2 px-3 border-bottom">
+    <li class="h2 font-weight-bold">${arrayData[i].properties.name}</li>
+    <li class="P-address">${arrayData[i].properties.address}</li>
+    <li>${arrayData[i].properties.phone}</li>
+    <li>${arrayData[i].properties.note}</li>
+    <li>
+      <ul class="d-flex justify-content-center font-weight-bold">
+        <div class="container p-0"><div class="row"><div class="col-6">
+          <li class="bg-adult px-4 py-2 rounded-pill text-white">
+            <div class="d-flex justify-content-between">
+              <span class="button-width">成人口罩</span><span>${arrayData[i].properties.mask_adult}</span>
+            </div>
+          </li>
+        </div>
+        <div class="col-6">
+          <li class="bg-child px-4 py-2 rounded-pill text-white">
+            <div class="d-flex justify-content-between">
+              <span>兒童口罩</span><span>${arrayData[i].properties.mask_child}</span>
+            </div>
+          </li>
+        </div>
+        </div>
+        </div>
+      </ul>
+    </li>
+  </ul></a>`
+  }
+  document.querySelector('.list').innerHTML = Str;
+  let pharmacy = document.querySelectorAll('.pharmacy');
+  for(let i=0; i<arrayData.length; i++){
+      pharmacy[i].addEventListener('click',  function(e){targetPharmacy(e, arrayData)}, false);
   }
 }
 
