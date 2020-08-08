@@ -2092,7 +2092,7 @@ let map = L.map('map', {
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
-
+let markers = new L.MarkerClusterGroup().addTo(map);
 function getMarker(){
   let greenIcon = new L.Icon({
     iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -2103,7 +2103,7 @@ function getMarker(){
     shadowSize: [41, 41]
   });
   let array = data.features;
-  let markers = new L.MarkerClusterGroup().addTo(map);
+ 
   for(let i =0; array.length>i;i++){
     markers.addLayer(L.marker([array[i].geometry.coordinates[1],array[i].geometry.coordinates[0]], {icon: greenIcon}).bindPopup(
       `<h2>${array[i].properties.name}</h2>
@@ -2191,9 +2191,8 @@ function targetPharmacy(e, targetData){
   let adult = e.currentTarget.dataset.adult;
   let child = e.currentTarget.dataset.child;
   let location = [lat, lng];
-  for(let i=0; i<targetData.length; i++){
-    map.setView(location, 20);
-    L.marker(location).addTo(map)
+  map.setView(location, 20);
+  L.marker(location).addTo(map)
     .bindPopup(
       `<h2>${name}</h2>
         <p>${add}</p>
@@ -2213,7 +2212,6 @@ function targetPharmacy(e, targetData){
               </div>
             </div>
           </div>`).openPopup();  
-  }
 }
 
 function renderList (arrayData) {
